@@ -1,0 +1,70 @@
+.slick_slider {
+  height: 370px;
+}
+
+.slick-prev:before,
+.slick-next:before {
+  font-family: "slick";
+  font-size: 20px;
+  line-height: 1;
+  opacity: 1;
+  /* color: rgba(238, 234, 234, 0.9); */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.slick-slide img {
+  width: 100%;
+  height: 179px;
+}
+
+.card_icons {
+  /* padding: 10px; */
+  /* text-align: center; */
+  display: flex;
+  justify-content: space-between;
+  /* align-items: center; */
+}
+
+.left_icons,
+.right_icons {
+  display: flex;
+  gap: 10px;
+}
+.left_icon {
+  color: blue;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.right_icon {
+  font-size: 20px;
+}
+
+.card_detail_modal .modal-dialog {
+  max-width: 80% !important;
+  margin: 1.75rem auto;
+}
+
+.add_comment {
+  width: 100%;
+  display: flex;
+  justify-items: center;
+  justify-content: space-around;
+  gap: 20px;
+  padding: 0 10px 10px 10px;
+}
+
+.comment_input {
+  outline: none;
+  border: none;
+  border-bottom: 1px solid gray;
+  color: rgb(13, 14, 14);
+  width: 100%;
+}
+.comment_input::placeholder {
+  color: rgb(13, 14, 14);
+}
+.post_btn {
+  margin-left: auto;
+}

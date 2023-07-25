@@ -1,0 +1,39 @@
+.posts {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.user_image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 20px;
+}
+
+.user_profile {
+  padding: 10px 0;
+  text-align: left;
+}
+.card_footer {
+  padding: 10px;
+  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer_right,
+.footer_left {
+  display: flex;
+  gap: 20px;
+}
+.like_icon {
+  color: blue;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.comment_icon {
+  font-size: 30px;
+}

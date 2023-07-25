@@ -1,0 +1,11 @@
+.slider-area {
+  /* box-shadow: 0 0.5px 0px gray; */
+  border-bottom: 1px solid gray;
+}
+div a {
+  color: black;
+}
+div a:hover {
+  text-decoration: none;
+  color: green;
+}
