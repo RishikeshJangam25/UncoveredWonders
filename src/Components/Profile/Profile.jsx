@@ -1,126 +1,19 @@
-// import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
+import { AiOutlineEdit } from "react-icons/ai";
+import { useAuth } from "../../context/AuthContext";
 
-// const Profile = () => {
-//   const [profileData, setProfileData] = useState({
-//     name: '',
-//     surname: '',
-//     phoneNumber: '',
-//     address: '',
-//     email: '',
-//     education: '',
-//     country: '',
-//     stateRegion: '',
-//   });
-
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setProfileData((prevData) => ({
-//       ...prevData,
-//       [name]: value,
-//     }));
-//   };
-
-//   const handleSaveProfile = () => {
-//     console.log(profileData);
-//   };
-
-//   return (
-//     <div className="container rounded bg-white mt-5 mb-5">
-//       <div className="row">
-//         <div className="col-md-3 border-right">
-//           <div className="d-flex flex-column align-items-center text-center p-3 py-5">
-//             <img
-//               className="rounded-circle mt-5"
-//               src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1Y4W0p2sjv51tINa74k7dvc5QnDsO3qJwAQ&usqp=CAU"
-//               alt="Profile"
-//             />
-//             <span className="font-weight-bold">Ducky</span>
-//             <span className="text-black-50">ducky@gmail.com</span>
-//           </div>
-//         </div>
-//         <div className="col-md-5 border-right">
-//           <div className="p-3 py-5">
-//             <div className="d-flex justify-content-between align-items-center mb-3">
-//               <h4 className="text-right">Profile</h4>
-//             </div>
-
-//             <div className="col-md-12 mb-2">
-//                 <label className="labels">Name</label>
-//                 <input
-//                   type="text"
-//                   className="form-control"
-//                   placeholder="Name"
-//                   name="name"
-//                   value={profileData.name}
-//                   onChange={handleChange}
-//                 />
-//             </div>
-//             <div className="col-md-12 mb-2">
-//                 <label className="labels">Phone No.</label>
-//                 <input
-//                   type="text"
-//                   className="form-control"
-//                   placeholder="Phone Number"
-//                   name="phoneno"
-//                   value={profileData.phoneNumber}
-//                   onChange={handleChange}
-//                 />
-//             </div>
-
-//             <div className="col-md-12 mb-2">
-//                 <label className="labels">Address</label>
-//                 <input
-//                   type="text"
-//                   className="form-control"
-//                   placeholder="Address"
-//                   name="address"
-//                   value={profileData.address}
-//                   onChange={handleChange}
-//                 />
-//             </div>
-
-//             <div className="col-md-12 mb-2">
-//                 <label className="labels">Email ID</label>
-//                 <input
-//                   type="email"
-//                   className="form-control"
-//                   placeholder="Email"
-//                   name="email"
-//                   value={profileData.email}
-//                   onChange={handleChange}
-//                 />
-//             </div>
-
-//             <div className="mt-5 text-center">
-//               <button
-//                 className="btn btn-primary profile-button"
-//                 type="button"
-//                 onClick={handleSaveProfile}
-//               >
-//                 Save Profile
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Profile;
-
-import React, { useState } from "react";
-import { AiOutlineEdit } from 'react-icons/ai';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Profile = () => {
-
   const initialProfileData = {
-    name: "Ducky",
-    phoneNumber: "123456789",
-    address: "Pune",
-    email: "ducky@gmail.com",
+    // name: "Ducky",
+    // phoneNo: "12345",
+    // address: "Pune",
+    // email: "ducky@gmail.com",
   };
+
+  const { isLoggedIn: token, userData: userEmail } = useAuth();
 
   const [profileData, setProfileData] = useState(initialProfileData);
 
@@ -142,8 +35,57 @@ const Profile = () => {
     setIsEditing((prevIsEditing) => !prevIsEditing);
   };
 
-  const handleSaveProfile = () => {
-    console.log('userProfile ', profileData, profilePhoto);    
+  const handleSaveProfile = async () => {
+    console.log("userProfile ", profileData, profilePhoto);
+
+    const updateProfileData = {
+      name: profileData.name,
+      email: profileData.email,
+      phoneNo: profileData.phoneNo,
+      address: profileData.address,
+    };
+
+    try {
+      const res = await fetch("https://localhost:7168/api/User/UpdateProfile", {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        method: "PUT",
+        body: JSON.stringify(updateProfileData),
+      });
+
+      if (res.ok) {
+        toast.success("Profile Updated Successfully", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+      } else {
+        toast.error("Error occured!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+      }
+      const updatedUserData = await res.json();
+
+      setProfileData(updatedUserData);
+      console.log("userDetails ", updatedUserData);
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
+
     setIsEditing(false);
   };
 
@@ -158,133 +100,146 @@ const Profile = () => {
     }
   };
 
+  const fetchUserDetails = async (email) => {
+    try {
+      const res = await fetch(
+        `https://localhost:7168/api/User/GetUserDetailsByEmail?email=${email}`,
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const userDetailsData = await res.json();
+      setProfileData(userDetailsData);
+      console.log("userDetails ", userDetailsData);
+      return userDetailsData;
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
+  };
+
+  useEffect(() => {
+    async function fetchData() {
+      const userDetailsData = await fetchUserDetails(userEmail);
+      console.log("profile ", userDetailsData.name);
+    }
+    fetchData();
+  }, []);
+
   return (
-    <div className="container d-flex justify-content-center">
-      <div className="container rounded bg-white mt-5 mb-5">
-        <div className="row">
-          <div className="col-md-3 border-right">
-            <div className="col-md-3 border-right">
-              <div className="d-flex flex-column align-items-center text-center p-3 py-5">
-                <label htmlFor="profile-photo" style={{ position: "relative" }}>
-                  <img
-                    className="rounded-circle mt-5  profile-photo-editable"
-                    src={profilePhoto}
-                    alt="Profile"
-                    onClick={isEditing ? null : handleEdit}
-                    style={{ height: '200px', width: '200px' }}
-                  />
-                  {isEditing && (
-                    <div
-                      style={{
-                        position: "absolute",
-                        bottom: "5px",
-                        right: "5px",
-                        backgroundColor: "white",
-                        borderRadius: "50%",
-                        padding: "3px",
-                      }}
-                    >
-                      <AiOutlineEdit size={24} onClick={handleEdit} />
-                    </div>
-                  )}
-                  {isEditing && (
-                    <input
-                      type="file"
-                      id="profile-photo"
-                      onChange={handleProfilePhotoChange}
-                      accept="image/*"
-                      style={{ display: "none" }}
-                    />
-                  )}
-                </label>
-                <span className="font-weight-bold">{profileData.name}</span>
-                <span className="text-black-50">{profileData.email}</span>
+    
+    <div className=" container row m-3 justify-content-center">
+      <div className=" col col-lg-6 card p-3 ">
+        <div className="d-flex flex-column align-items-center text-center">
+          <label htmlFor="profile-photo " style={{ position: "relative" }}>
+            <img
+              className="rounded-circle mb-2  profile-photo-editable"
+              src={profilePhoto}
+              alt="Profile"
+              onClick={isEditing ? null : handleEdit}
+              style={{ height: "200px", width: "200px" }}
+            />
+            {isEditing && (
+              <div
+                style={{
+                  position: "absolute",
+                  backgroundColor: "white",
+                  borderRadius: "50%",
+                  padding: "3px",
+                }}
+              >
+                <AiOutlineEdit size={24} onClick={handleEdit} />
               </div>
-            </div>
-          </div>
-          <div className="col-md-5 border-right">
-            <div className="p-3 py-5">
-              <div className="d-flex justify-content-between align-items-center mb-3">
-                <h4 className="text-right">Profile</h4>
-                {!isEditing ? (
-                  <button
-                    className="btn btn-primary profile-button"
-                    onClick={handleEdit}
-                  >
-                    Edit
-                  </button>
-                ) : (
-                  <button
-                    className="btn btn-primary profile-button"
-                    onClick={handleSaveProfile}
-                  >
-                    Save
-                  </button>
-                )}
-              </div>
+            )}
+            {isEditing && (
+              <input
+                type="file"
+                id="profile-photo"
+                onChange={handleProfilePhotoChange}
+                accept="image/*"
+                style={{ display: "none" }}
+              />
+            )}
+          </label>
+          <span className="font-weight-bold">{profileData.name}</span>
+          <span className="text-black-50">{profileData.email}</span>
+        </div>
 
-              <div className="col-md-12 mb-2">
-                <label className="labels">Name</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Name"
-                  name="name"
-                  value={profileData.name}
-                  readOnly={!isEditing}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="col-md-12 mb-2">
-                <label className="labels">Phone No.</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Phone Number"
-                  name="phoneNumber"
-                  value={profileData.phoneNumber}
-                  readOnly={!isEditing}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="col-md-12 mb-2">
-                <label className="labels">Address</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Address"
-                  name="address"
-                  value={profileData.address}
-                  readOnly={!isEditing}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="col-md-12 mb-2">
-                <label className="labels">Email ID</label>
-                <input
-                  type="email"
-                  className="form-control"
-                  placeholder="Email"
-                  name="email"
-                  value={profileData.email}
-                  readOnly={!isEditing}
-                  onChange={handleChange}
-                />
-              </div>
-
-              {/* {isEditing && (
-              <div className="mt-5 text-center">
-                <button className="btn btn-primary profile-button" onClick={handleSaveProfile}>
-                  Save Profile
+        <div>
+          <div className="py-3">
+            <div className="d-flex justify-content-between align-items-right">
+              {/* <h4 className="text-right">Profile</h4> */}
+              {!isEditing ? (
+                <button
+                  className="btn btn-primary profile-button"
+                  onClick={handleEdit}
+                >
+                  Edit
                 </button>
-              </div>
-            )} */}
+              ) : (
+                <button
+                  className="btn btn-primary profile-button"
+                  onClick={handleSaveProfile}
+                >
+                  Save
+                </button>
+              )}
             </div>
+
+            <div className="col-md-12 mb-2">
+              <label className="labels">Name</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Name"
+                name="name"
+                value={profileData.name}
+                readOnly={!isEditing}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="col-md-12 mb-2">
+              <label className="labels">Phone No.</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Phone Number"
+                name="phoneNo"
+                value={profileData.phoneNo}
+                readOnly={!isEditing}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="col-md-12 mb-2">
+              <label className="labels">Address</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Address"
+                name="address"
+                value={profileData.address}
+                readOnly={!isEditing}
+                onChange={handleChange}
+              />
+            </div>
+            
           </div>
         </div>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </div>
   );
 };

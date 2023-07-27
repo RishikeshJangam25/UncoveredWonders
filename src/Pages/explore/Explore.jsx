@@ -16,16 +16,20 @@ const Explore = () => {
   const [data, setData] = useState([]);
 
   const navigate = useNavigate();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn: token, userData: userEmail } = useAuth();
   const { openModel, openSignupModel } = useModel();
 
+  const [userDetails, setUserDetails] = useState({});
+
+  const [selectedItem, setSelectedItem] = useState("home");
+
   useEffect(() => {
-    console.log("explore", isLoggedIn);
-    if (!isLoggedIn) {
-      // openSignupModel();
-      openModel();
+    console.log("explore", token, userEmail);
+    if (!token) {
+      openSignupModel();
+      // openModel();
     }
-  }, [isLoggedIn]);
+  }, [token]);
 
   // useEffect(async() => {
   //   const response = await fetch()
@@ -61,14 +65,14 @@ const Explore = () => {
       // "userID": (Math.random() * 100).toFixed(0),
       // "postTypeID": (Math.random() * 10).toFixed(0),
       // "postCategoryID": (Math.random() * 10).toFixed(0),
-      userID: 1,
+      userID: userDetails.userID,
       postTypeID: 1,
       postCategoryID: 1,
       header: post.title,
       postUrl: img.fileUrl,
       location: "pune",
-      createdBy: "user1",
-      updatedBy: "user1",
+      createdBy: userDetails.name,
+      updatedBy: userDetails.name,
     };
 
     try {
@@ -80,8 +84,9 @@ const Explore = () => {
         body: JSON.stringify(postData),
       })
         .then((res) => {
-          console.log("res ", res);
+          console.log("addPost ", res);
           if (res.ok) {
+            fetchPosts(userDetails.userID);
             toast.success("Post Created Successfully", {
               position: "top-right",
               autoClose: 5000,
@@ -108,8 +113,7 @@ const Explore = () => {
         })
         .then((res) => {
           console.log("postRes ", res, postData);
-        })
-        
+        });
     } catch (error) {
       console.log("error ", error);
     }
@@ -126,20 +130,92 @@ const Explore = () => {
     //     comments: [],
     //   },
     // ]);
+
+    
+
+  };
+
+  const fetchUserDetails = async (email) => {
+    try {
+      const res = await fetch(
+        `https://localhost:7168/api/User/GetUserDetailsByEmail?email=${email}`,
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const userDetailsData = await res.json();
+      setUserDetails(userDetailsData);
+      console.log("userDetails ", userDetailsData);
+      return userDetailsData;
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
+  };
+
+  const fetchPosts = async (userId) => {
+    try {
+      const res = await fetch(
+        `https://localhost:7168/api/Post/PostsByUserId?userId=${userId}`
+      );
+      const postData = await res.json();
+      const posts = postData.map((post) => ({
+        id: post.postID,
+        // images: post.postUrl,
+        images:
+          "https://hblimg.mmtcdn.com/content/hubble/img/agra/mmt/activities/m_activities-agra-taj-mahal_l_400_640.jpg",
+        title: post.header,
+        description: post.header,
+        likes: 0,
+        dislikes: 0,
+        comments: [],
+      }));
+      setData(posts.reverse());
+      console.log("res ", postData);
+      return posts;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
 
   useEffect(() => {
-    setData(placesDetail);
-    console.log('placesDetails ', data);
-  }, [data]);
+    async function fetchData() {
+      const userDetailsData = await fetchUserDetails(userEmail);
+      console.log("useEffectuserDetail", userDetailsData.name);
+
+      const postsData = await fetchPosts(userDetailsData.userID);
+      console.log("useEffect posts", postsData);
+    }
+    fetchData();
+  }, []);
 
   return (
     <section className="layout">
-      <Sidebar />
+      {/* <main className="main_content"> */}
+
+      {/* <Posts data={data} setData={setData} userName={userDetails?.name} /> */}
+
+      {/* <Create handlePost={handlePost} /> */}
+
+      {/* <Profile /> */}
+      {/* </main> */}
+
+      <Sidebar setSelectedItem={setSelectedItem} selectedItem={selectedItem} />
+
       <main className="main_content">
-        {data && <Posts data={data} setData={setData} />}
-        <Create handlePost={handlePost} />
+        {selectedItem === "home" && (
+          <Posts data={data} setData={setData} userName={userDetails?.name} />
+        )}
+        {selectedItem === "posts" && (
+          <Posts data={data} setData={setData} userName={userDetails?.name} />
+        )}
+        {selectedItem === "create" && <Create handlePost={handlePost} />}
+        {selectedItem === "profile" && <Profile />}
+        {/* {selectedItem === "more" && <More />} */}
       </main>
+
       <ToastContainer
         position="top-right"
         autoClose={5000}

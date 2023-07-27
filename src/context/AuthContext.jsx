@@ -14,6 +14,8 @@ export const AuthProvider = ({ children }) => {
 
   const [isSignup, setSignup] = useState(false);
 
+  const [userData, setUserData] = useState(localStorage.getItem('email'));
+
   const login = async(loginData) => {
     // Perform login logic and set isLoggedIn to true
 
@@ -32,8 +34,15 @@ export const AuthProvider = ({ children }) => {
       console.log('login ', res.accessToken, res);
       
       const decodedToken = jwt(res.accessToken)
-      console.log('decodedToken ', decodedToken);
+      
+      // setUserData(decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"])
 
+      console.log('decodedToken ', userData, decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"]);
+
+      const email = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"]
+
+      localStorage.setItem('email', email)
+      
       if(res.statusCode === 200) {
         localStorage.setItem('token', res.accessToken);
         setIsLoggedIn(true);
@@ -71,7 +80,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn, login, logout, isSignup, signup }}
+      value={{ isLoggedIn, login, logout, isSignup, signup, userData }}
     >
       {children}
     </AuthContext.Provider>

@@ -10,7 +10,9 @@ function App() {
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/explore" element={<Explore />} />
-      <Route path="/user/profile" element={<Profile />} />
+      {/* <Route path="/create" component={Create} /> */}
+      <Route path="/profile" element={<Profile />} />
+      {/* <Route path="/more" component={More} /> */}
     </Routes>
   );
 }
