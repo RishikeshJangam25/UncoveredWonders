@@ -144,6 +144,8 @@ const Create = ({ handlePost }) => {
 
   // const history = useHistory();
 
+  const navigate = useNavigate();
+
   const { title, description } = post;
 
   const handleFile = (e) => {
@@ -171,10 +173,11 @@ const Create = ({ handlePost }) => {
 
   const handleSubmit = () => {
     handlePost({ ...post, images }, image);
-    // closeModel();
-    // history.push("/");
+  
+    //history.push("/explore");
     // window.location.href = "/";
-    // navigate("/explore");
+    navigate("/explore");
+    console.log("submit ");
   };
 
   return (
@@ -186,7 +189,7 @@ const Create = ({ handlePost }) => {
         <div className="create-body">
           <form className="mx-3">
             <div>
-              <label htmlFor="images" className="form-label">
+              <label htmlFor="images" className="form-label font-weight-bold text-black-50">
                 Image
               </label>
               <input
@@ -199,7 +202,7 @@ const Create = ({ handlePost }) => {
               />
             </div>
             <div>
-              <label htmlFor="title" className="form-label">
+              <label htmlFor="title" className="form-label font-weight-bold text-black-50">
                 Title
               </label>
               <input
@@ -212,7 +215,7 @@ const Create = ({ handlePost }) => {
               />
             </div>
             <div>
-              <label htmlFor="description" className="form-label">
+              <label htmlFor="description" className="form-label font-weight-bold text-black-50">
                 Description
               </label>
               <textarea
@@ -226,9 +229,11 @@ const Create = ({ handlePost }) => {
           </form>
         </div>
         <div className="create-footer">
+          <Link to={"/explore"}>
           <Button variant="primary" onClick={handleSubmit}>
             Submit
           </Button>
+          </Link>
         </div>
       </div>
     </div>

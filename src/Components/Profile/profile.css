@@ -2,8 +2,9 @@ body {
     background: rgb(99, 39, 120)
 }
 
-.labels {
+label {
     color: black;
+    background-color: #682773;
 }
 
 .form-control:focus {
@@ -51,4 +52,6 @@ img{
     margin-top: 10px !important;
 }
 
-
+.profile {
+    border-radius: 3%;
+}

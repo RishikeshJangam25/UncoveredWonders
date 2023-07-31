@@ -43,7 +43,7 @@
 }
 
 .sidebar_nav li.selected {
-  background-color: wheat;
+  background-color: #c7bebe;
   border-radius: 8px;
   padding: 4px;
 }

@@ -14,6 +14,7 @@ const Post = ({ item, handlePost, userName }) => {
         padding: "0",
         width: "650px",
         height: "635px",
+        borderRadius: "2.5%"
       }}
     >
       <div className="user_profile">
@@ -22,7 +23,7 @@ const Post = ({ item, handlePost, userName }) => {
           src="http://localhost:5173/src/assets/images/user.jpg"
           alt="user"
         />
-        <strong className="ms-2">{userName}</strong>
+        <strong className="ms-2">{userName ? userName : item.userName}</strong>
       </div>
       <Card.Img
         // src={item.images[0]}

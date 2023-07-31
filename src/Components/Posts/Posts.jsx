@@ -1,7 +1,10 @@
 import Post from "./Post";
 import "./post.css";
-let nextId;
+
 const Posts = ({ data, userName }) => {
+
+  console.log('posts ', data);
+
   return (
     <section className="posts">
       {data.map((item) => {
