@@ -4,13 +4,15 @@ import jwt from 'jwt-decode';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(
+  // const [isLoggedIn, setIsLoggedIn] = useState(
     // localStorage.getItem("isLoggedIn") === null
     //   ? false
     //   : JSON.parse(localStorage.getItem("isLoggedIn"))
-    localStorage.getItem('token') 
+    // localStorage.getItem('token') 
     //=== null ? false : JSON.parse(localStorage.getItem('token'))
-  );
+  // );
+
+  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('token'))
 
   const [isSignup, setSignup] = useState(false);
 
@@ -41,11 +43,15 @@ export const AuthProvider = ({ children }) => {
 
       const email = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"]
 
-      localStorage.setItem('email', email)
+      localStorage.setItem('email', email);
       
+      setUserData(email)
+      
+      setIsLoggedIn(res.accessToken)
+
       if(res.statusCode === 200) {
         localStorage.setItem('token', res.accessToken);
-        setIsLoggedIn(true);
+        // setIsLoggedIn(true);
         // localStorage.setItem("isLoggedIn", "true");
       }
     })

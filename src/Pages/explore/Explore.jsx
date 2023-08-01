@@ -31,6 +31,8 @@ const Explore = () => {
 
   const [selectedItem, setSelectedItem] = useState("home");
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     console.log("explore", token, userEmail);
     if (!token) {
@@ -87,10 +89,10 @@ const Explore = () => {
         },
         body: JSON.stringify(postData),
       })
-        .then((res) => {
+        .then(async (res) => {
           console.log("addPost ", res);
           if (res.ok) {
-            fetchPosts(userDetails.userID);
+           await fetchAllPosts();
             toast.success("Post Created Successfully", {
               position: "top-right",
               autoClose: 5000,
@@ -101,6 +103,8 @@ const Explore = () => {
               progress: undefined,
               theme: "colored",
             });
+            // window.location.href = "/explore"
+            // navigate("/explore");
           } else {
             toast.error("Error occured!", {
               position: "top-right",
@@ -224,8 +228,9 @@ const Explore = () => {
           id: post.postID,
           userId: post.userID,
           userName: userNameData?.name || "User",
-          images:
-            "https://hblimg.mmtcdn.com/content/hubble/img/agra/mmt/activities/m_activities-agra-taj-mahal_l_400_640.jpg",
+          images: post.postUrl,
+          // images:
+          //   "https://hblimg.mmtcdn.com/content/hubble/img/agra/mmt/activities/m_activities-agra-taj-mahal_l_400_640.jpg",
           title: post.header,
           description: post.header,
           likes: 0,
@@ -254,9 +259,9 @@ const Explore = () => {
       const posts = postData.map((post) => ({
         id: post.postID,
         userId: post.userID,
-        // images: post.postUrl,
-        images:
-          "https://hblimg.mmtcdn.com/content/hubble/img/agra/mmt/activities/m_activities-agra-taj-mahal_l_400_640.jpg",
+        images: post.postUrl,
+        // images:
+        //   "https://hblimg.mmtcdn.com/content/hubble/img/agra/mmt/activities/m_activities-agra-taj-mahal_l_400_640.jpg",
         title: post.header,
         description: post.header,
         likes: 0,

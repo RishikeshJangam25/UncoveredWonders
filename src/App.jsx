@@ -10,8 +10,8 @@ function App() {
 
   const ProtectedRoute = ({ element }) => {
     const { isLoggedIn } = useAuth();
-
-    return isLoggedIn ? element : <Navigate to="/" />;
+    console.log('protectedroute ', isLoggedIn);
+    return isLoggedIn != null ? element : <Navigate to="/" />;
   };
 
   return (
